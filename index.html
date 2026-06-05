@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Console</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="weather-clear">
+  <main class="app-shell">
+    <section class="search-panel" aria-label="天气查询">
+      <div>
+        <p class="eyebrow">Weather Console</p>
+        <h1>城市天气查询</h1>
+      </div>
+
+      <form class="search-form" id="weatherForm">
+        <label class="sr-only" for="cityInput">输入城市名称</label>
+        <input id="cityInput" type="search" placeholder="输入城市，例如 Beijing" autocomplete="off" required>
+        <button id="searchButton" type="submit">
+          <span class="button-text">查询</span>
+          <span class="button-loader" aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <div class="recent-row" aria-label="最近搜索城市">
+        <span>最近</span>
+        <div class="recent-list" id="recentList"></div>
+      </div>
+    </section>
+
+    <section class="dashboard" aria-live="polite">
+      <article class="current-card">
+        <div class="weather-icon" id="weatherIcon" aria-hidden="true">☀</div>
+        <div>
+          <p class="city-name" id="cityName">等待查询</p>
+          <p class="weather-desc" id="weatherDescription">输入城市名称查看实时天气</p>
+        </div>
+        <strong class="temperature" id="temperature">--°</strong>
+      </article>
+
+      <section class="metric-grid" aria-label="天气指标">
+        <article class="metric-card">
+          <span>湿度</span>
+          <strong id="humidity">--%</strong>
+        </article>
+        <article class="metric-card">
+          <span>风速</span>
+          <strong id="windSpeed">-- km/h</strong>
+        </article>
+        <article class="metric-card">
+          <span>体感温度</span>
+          <strong id="apparentTemperature">--°</strong>
+        </article>
+        <article class="metric-card">
+          <span>更新时间</span>
+          <strong id="updatedAt">--:--</strong>
+        </article>
+      </section>
+
+      <p class="status-message" id="statusMessage"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
