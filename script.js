@@ -17,12 +17,12 @@ const RECENT_KEY = "weather-app-recent-cities";
 const MAX_RECENT = 6;
 
 const weatherCodes = [
-  { codes: [0], description: "晴朗", icon: "☀", theme: "weather-clear" },
-  { codes: [1, 2, 3], description: "多云", icon: "☁", theme: "weather-cloud" },
-  { codes: [45, 48], description: "雾", icon: "≋", theme: "weather-fog" },
-  { codes: [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82], description: "降雨", icon: "☔", theme: "weather-rain" },
-  { codes: [71, 73, 75, 77, 85, 86], description: "降雪", icon: "❄", theme: "weather-snow" },
-  { codes: [95, 96, 99], description: "雷暴", icon: "⚡", theme: "weather-storm" }
+  { codes: [0], description: "Clear", icon: "☀", theme: "weather-clear" },
+  { codes: [1, 2, 3], description: "Cloudy", icon: "☁", theme: "weather-cloud" },
+  { codes: [45, 48], description: "Fog", icon: "≋", theme: "weather-fog" },
+  { codes: [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82], description: "Rain", icon: "☔", theme: "weather-rain" },
+  { codes: [71, 73, 75, 77, 85, 86], description: "Snow", icon: "❄", theme: "weather-snow" },
+  { codes: [95, 96, 99], description: "Thunderstorm", icon: "⚡", theme: "weather-storm" }
 ];
 
 function getRecentCities() {
@@ -46,7 +46,7 @@ function renderRecentCities() {
 
   if (!recent.length) {
     const empty = document.createElement("span");
-    empty.textContent = "暂无记录";
+    empty.textContent = "No recent searches";
     recentList.appendChild(empty);
     return;
   }
@@ -73,7 +73,7 @@ function setStatus(message, type = "info") {
 
 function getWeatherMeta(code) {
   return weatherCodes.find((item) => item.codes.includes(code)) || {
-    description: "未知天气",
+    description: "Unknown weather",
     icon: "?",
     theme: "weather-cloud"
   };
@@ -85,7 +85,7 @@ function applyTheme(theme) {
 }
 
 function formatTime(value) {
-  return new Intl.DateTimeFormat("zh-CN", {
+  return new Intl.DateTimeFormat("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false
@@ -96,17 +96,17 @@ async function fetchCityLocation(query) {
   const url = new URL("https://geocoding-api.open-meteo.com/v1/search");
   url.searchParams.set("name", query);
   url.searchParams.set("count", "1");
-  url.searchParams.set("language", "zh");
+  url.searchParams.set("language", "en");
   url.searchParams.set("format", "json");
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error("城市查询服务暂时不可用，请稍后再试。");
+    throw new Error("The city search service is temporarily unavailable. Please try again later.");
   }
 
   const data = await response.json();
   if (!data.results || !data.results.length) {
-    throw new Error("没有找到这个城市，请检查拼写后再试。");
+    throw new Error("City not found. Please check the spelling and try again.");
   }
 
   return data.results[0];
@@ -121,12 +121,12 @@ async function fetchWeather(location) {
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error("天气服务暂时不可用，请稍后再试。");
+    throw new Error("The weather service is temporarily unavailable. Please try again later.");
   }
 
   const data = await response.json();
   if (!data.current) {
-    throw new Error("没有获得当前天气数据，请换个城市再试。");
+    throw new Error("Current weather data is unavailable. Please try another city.");
   }
 
   return data.current;
@@ -150,22 +150,22 @@ function renderWeather(location, current) {
 async function searchWeather(rawCity) {
   const query = rawCity.trim();
   if (!query) {
-    setStatus("请输入城市名称。", "error");
+    setStatus("Please enter a city name.", "error");
     return;
   }
 
   setLoading(true);
-  setStatus("正在获取天气数据...");
+  setStatus("Fetching weather data...");
 
   try {
     const location = await fetchCityLocation(query);
     const current = await fetchWeather(location);
     renderWeather(location, current);
     saveRecentCity(location.name);
-    setStatus("天气数据已更新。");
+    setStatus("Weather data updated.");
     cityInput.value = "";
   } catch (error) {
-    setStatus(error.message || "查询失败，请稍后再试。", "error");
+    setStatus(error.message || "Search failed. Please try again later.", "error");
   } finally {
     setLoading(false);
     cityInput.focus();
